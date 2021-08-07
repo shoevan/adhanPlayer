@@ -1,0 +1,2 @@
+# adhanPlayer
+Plays the adhan

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import time
 import sys
@@ -7,6 +7,8 @@ import pychromecast
 import os
 import random
 
+services, browser = pychromecast.discovery.discover_chromecasts()
+print(services, browser)
 chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=["Kitchen speaker"])
 if not chromecasts:
     print('No chromecast with name "{}" discovered'.format("Kitchen speaker"))
@@ -22,12 +24,16 @@ def getAdhanFile(fajr):
     print("adhanFiles: ", adhanFiles)
     return adhanFiles[random.randrange(0,len(adhanFiles))]
 
-def castAdhan(fajr):
+def castAdhan(fileType, fajr):
     cast = chromecasts[0]
     cast.wait()
     print(cast.device)
     mc = cast.media_controller
-    fileAddr = "http://192.168.1.61:8000/adhan/" + getAdhanFile(fajr)
+
+    if fileType is "adhan":
+        fileAddr = "http://192.168.1.61:8000/adhan/" + getAdhanFile(fajr)
+    else:
+        fileAddr = "http://192.168.1.61:8000/adhanDua/adhanDua.mp3"
     cast.media_controller.play_media(fileAddr, "audio/mp3")
 
     # Wait for player_state PLAYING
@@ -42,6 +48,10 @@ def castAdhan(fajr):
             if player_state == "PLAYING":
                 has_played = True
                 print("Playing ", fileAddr)
+                if fileType is "adhan":
+                    while cast.media_controller.status.player_state == "PLAYING":
+                        time.sleep(10)
+                    castAdhan("dua", False)
                 break
             if cast.socket_client.is_connected and has_played and player_state != "PLAYING":
                 has_played = False  
@@ -65,7 +75,7 @@ def main(argv):
         if opt == "-f":
             print("Cast Adhan for Fajr")
             fajr = True
-    castAdhan(fajr)
+    castAdhan("adhan", fajr)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

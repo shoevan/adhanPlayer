@@ -6,10 +6,24 @@ import getopt
 import pychromecast
 import os
 import random
+import socket
+
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
 
 services, browser = pychromecast.discovery.discover_chromecasts()
 print(services, browser)
-chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=["Kitchen speaker"])
+chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=["Kitchen Speaker"])
 if not chromecasts:
     print('No chromecast with name "{}" discovered'.format("Kitchen speaker"))
     sys.exit(1)
@@ -27,13 +41,13 @@ def getAdhanFile(fajr):
 def castAdhan(fileType, fajr):
     cast = chromecasts[0]
     cast.wait()
-    print(cast.device)
+    #print(cast.device)
     mc = cast.media_controller
 
     if fileType is "adhan":
-        fileAddr = "http://192.168.1.61:8000/adhan/" + getAdhanFile(fajr)
+        fileAddr = f"http://{get_ip()}:8000/adhan/" + getAdhanFile(fajr)
     else:
-        fileAddr = "http://192.168.1.61:8000/adhanDua/adhanDua.mp3"
+        fileAddr = f"http://{get_ip()}:8000/adhanDua/adhanDua.mp3"
     cast.media_controller.play_media(fileAddr, "audio/mp3")
 
     # Wait for player_state PLAYING

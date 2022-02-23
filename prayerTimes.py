@@ -16,6 +16,7 @@ def main():
     prayerTimeCalcMethod = 3
     prayerTimeSchool =1
     prayerTimes = urlRequest(f"http://api.aladhan.com/v1/timings/:date_or_timestamp?latitude={lat}&longitude={lon}&method={prayerTimeCalcMethod}&school={prayerTimeSchool}")["data"]["timings"]
+    print(prayerTimes)
     with open(f"{os.environ['HOME']}/prayerTimes.txt", "w") as prayers:
         prayers.write(f"{prayerTimes['Fajr']}\n")
         prayers.write(f"{prayerTimes['Dhuhr']}\n")

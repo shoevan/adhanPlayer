@@ -2,9 +2,10 @@
 
 import sys
 import os
+import getopt
 from crontab import CronTab, CronSlices
 
-def setCron():
+def setCron(chromecast_name):
     cron = CronTab(user="pi")
     cron.remove_all()
     prayerTimeFetch = cron.new(command=f"python3 {os.getenv('HOME')}/alarm/prayerTimes.py >> {os.getenv('HOME')}/prayerCron.txt", comment="prayerTimeFetch")
@@ -25,14 +26,21 @@ def setCron():
 
             timeSlot = lines[3:5] + " " + lines[0:2] + " * * *" 
 #            print("Time slot valid: ", timeSlot, CronSlices.is_valid(timeSlot))
-            prayer = cron.new(f"python3 {os.getenv('HOME')}/alarm/castAdhan.py {fajrSwitch} >> {os.getenv('HOME')}/prayerCron.txt", comment=prayerNames[x])
+            prayer = cron.new(f"python3 {os.getenv('HOME')}/alarm/castAdhan.py {fajrSwitch} -c {chromecast_name}>> {os.getenv('HOME')}/prayerCron.txt", comment=prayerNames[x])
             prayer.setall(timeSlot)
             x += 1
     cron.write()
 
-def main():
-
-    setCron()
+def main(argv):
+    try:
+        opts, args = getopt.getopt(argv, "c:")
+    except getopt.GetoptError:
+        print("python3 castAdhan.py [-f/ajr]")
+        sys.exit()
+    for opt, arg in opts:
+        if opt == "-c":
+            chromecast_name = arg
+    setCron(chromecast_name=chromecast_name)
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

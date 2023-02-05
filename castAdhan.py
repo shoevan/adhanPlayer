@@ -21,13 +21,6 @@ def get_ip():
         s.close()
     return IP
 
-services, browser = pychromecast.discovery.discover_chromecasts()
-print(services, browser)
-chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=["Kitchen Speaker"])
-if not chromecasts:
-    print('No chromecast with name "{}" discovered'.format("Kitchen speaker"))
-    sys.exit(1)
-
 def getAdhanFile(fajr):
     dirName = os.getenv("HOME") + "/adhan"
     adhanFiles = [f for f in os.listdir(dirName) if os.path.isfile(os.path.join(dirName, f))]
@@ -38,7 +31,7 @@ def getAdhanFile(fajr):
     print("adhanFiles: ", adhanFiles)
     return adhanFiles[random.randrange(0,len(adhanFiles))]
 
-def castAdhan(fileType, fajr):
+def castAdhan(fileType, fajr, chromecasts):
     cast = chromecasts[0]
     cast.wait()
     #print(cast.device)
@@ -75,12 +68,11 @@ def castAdhan(fileType, fajr):
         except KeyboardInterrupt:
             break
 
-    # Shut down discovery
-    browser.stop_discovery()
+    
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv, "-f", ["fajr"])
+        opts, args = getopt.getopt(argv, "-fc:", ["fajr"])
     except getopt.GetoptError:
         print("python3 castAdhan.py [-f/ajr]")
         sys.exit()
@@ -89,7 +81,18 @@ def main(argv):
         if opt == "-f":
             print("Cast Adhan for Fajr")
             fajr = True
-    castAdhan("adhan", fajr)
+        elif opt == "-c":
+            chromecast_name = arg
+    
+    services, browser = pychromecast.discovery.discover_chromecasts()
+    print(services, browser)
+    chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=[chromecast_name])
+    if not chromecasts:
+        print(f'No chromecast with name "{chromecast_name}" discovered')
+        sys.exit(1)
+    castAdhan(fileType="adhan", fajr=fajr, chromecasts=chromecasts)
+    # Shut down discovery
+    browser.stop_discovery()
 
 if __name__ == "__main__":
     main(sys.argv[1:])

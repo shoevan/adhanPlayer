@@ -26,7 +26,7 @@ def setCron(chromecast_name):
 
             timeSlot = lines[3:5] + " " + lines[0:2] + " * * *" 
 #            print("Time slot valid: ", timeSlot, CronSlices.is_valid(timeSlot))
-            prayer = cron.new(f"python3 {os.getenv('HOME')}/adhanPlayer/castAdhan.py {fajrSwitch} -c \"{chromecast_name}\">> {os.getenv('HOME')}/prayerCron.txt", comment=prayerNames[x])
+            prayer = cron.new(f"python3 {os.getenv('HOME')}/adhanPlayer/castAdhan.py {fajrSwitch} -c \"{chromecast_name}\" >> {os.getenv('HOME')}/prayerCron.txt", comment=prayerNames[x])
             prayer.setall(timeSlot)
             x += 1
     cron.write()

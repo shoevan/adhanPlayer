@@ -1,0 +1,14 @@
+[Unit]
+Description=HTTP server service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=pi
+ExecStart=python3 /home/pi/alarm/httpServer.py >> /home/pi/prayerCron.txt
+
+[Install]
+WantedBy=multi-user.target

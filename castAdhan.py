@@ -37,7 +37,7 @@ def castAdhan(fileType, fajr, chromecasts):
     #print(cast.device)
     mc = cast.media_controller
 
-    if fileType is "adhan":
+    if fileType == "adhan":
         fileAddr = f"http://{get_ip()}:8000/adhan/" + getAdhanFile(fajr)
     else:
         fileAddr = f"http://{get_ip()}:8000/adhanDua/adhanDua.mp3"
@@ -55,10 +55,10 @@ def castAdhan(fileType, fajr, chromecasts):
             if player_state == "PLAYING":
                 has_played = True
                 print("Playing ", fileAddr)
-                if fileType is "adhan":
+                if fileType == "adhan":
                     while cast.media_controller.status.player_state == "PLAYING":
                         time.sleep(10)
-                    castAdhan("dua", False)
+                    castAdhan("dua", False, chromecasts)
                 break
             if cast.socket_client.is_connected and has_played and player_state != "PLAYING":
                 has_played = False  

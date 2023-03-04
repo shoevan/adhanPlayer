@@ -10,7 +10,7 @@ def setCron(chromecast_name):
     cron.remove_all()
     prayerTimeFetch = cron.new(command=f"python3 {os.getenv('HOME')}/adhanPlayer/prayerTimes.py >> {os.getenv('HOME')}/prayerCron.txt", comment="prayerTimeFetch")
     prayerTimeFetch.setall("0 0 * * *")
-    setPrayerTime = cron.new(command=f"python3 {os.getenv('HOME')}/adhanPlayer/prayerCron.py >> {os.getenv('HOME')}/prayerCron.txt", comment="setPrayerTime")
+    setPrayerTime = cron.new(command=f"python3 {os.getenv('HOME')}/adhanPlayer/prayerCron.py -c \"{chromecast_name}\" >> {os.getenv('HOME')}/prayerCron.txt", comment="setPrayerTime")
     setPrayerTime.setall("5 0 * * *")
     prayerNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"]
     x = 0

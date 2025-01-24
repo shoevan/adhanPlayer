@@ -18,7 +18,7 @@ def main():
     lat = location["lat"]
     lon = location["lon"]
     prayerTimeCalcMethod = 3
-    prayerTimeSchool = 1
+    prayerTimeSchool = 0
     prayerTimes = urlRequest(
         f"http://api.aladhan.com/v1/timings/:date_or_timestamp?latitude={lat}&longitude={lon}&method={prayerTimeCalcMethod}&school={prayerTimeSchool}")["data"]["timings"]
     print(prayerTimes)

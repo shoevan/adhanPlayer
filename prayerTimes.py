@@ -1,5 +1,7 @@
 import os
 from requests import get
+from dotenv import load_dotenv
+from os import getenv
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
@@ -13,10 +15,14 @@ def urlRequest(url):
 
 
 def main():
-    publicIP = urlRequest("https://api.ipify.org?format=json")["ip"]
-    location = urlRequest(f"http://ip-api.com/json/{publicIP}")
-    lat = location["lat"]
-    lon = location["lon"]
+    load_dotenv()
+    lat = getenv("LATITUDE")
+    lon = getenv("LONGITUDE")
+    if not (lat and lon):
+        publicIP = urlRequest("https://api.ipify.org?format=json")["ip"]
+        location = urlRequest(f"http://ip-api.com/json/{publicIP}")
+        lat = location["lat"]
+        lon = location["lon"]
     prayerTimeCalcMethod = 3
     prayerTimeSchool = 0
     prayerTimes = urlRequest(
